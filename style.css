@@ -1,0 +1,80 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+  
+body {
+    height: 100vh;
+    width: 100vw;
+}
+  
+.background {
+    height: 100vh;
+    width: 100vw;
+    background-color: skyblue;
+}
+  
+.bird {
+    position: fixed;
+    top: 40vh;
+    left: 30vw;
+    z-index: 100;
+}
+  
+.pipe_sprite {
+    position: fixed;
+    top: 40vh;
+    left: 100vw;
+    height: 70vh;
+    width: 6.5vw;
+    background-image: url("./sprite_pipe_1px.png");
+    background-repeat: repeat-y;
+}
+
+.pipe_sprite_top_cover {
+    background-image: url("./pipe_cover.png");
+    height: 10vh;
+    width: 7vw;
+    background-repeat: no-repeat;
+    position: absolute;
+    bottom: 0px;
+}
+
+.pipe_sprite_bottom_cover {
+    background-image: url("./pipe_top_cover.png");
+    height: 10vh;
+    width: 7vw;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 0px;
+    transform: rotate(180deg);
+    right: 0px;
+}
+
+.message {
+    position: fixed;
+    z-index: 10;
+    height: 10vh;
+    font-size: 10vh;
+    font-weight: 100;
+    color: black;
+    top: 12vh;
+    left: 20vw;
+    text-align: center;
+}
+  
+.score {
+    position: fixed;
+    z-index: 10;
+    height: 10vh;
+    font-size: 10vh;
+    font-weight: 100;
+    color: black;
+    top: 0;
+    left: 0;
+}
+  
+.score_val {
+    color: rgb(90, 55, 55);
+}
