@@ -13,28 +13,33 @@ let background = document.querySelector('.background').getBoundingClientRect();
 
 // Getting reference to the score element
 let score_val = document.querySelector('.score_val');
-let message = document.querySelector('.message');
+let message_tag = document.querySelector('.message');
 let score_title = document.querySelector('.score_title');
 
 // Setting initial game state to start
 let game_state = 'End';
-message.innerHTML = 'Press Enter To Start The Game';
-message.style.left = '28vw';
+setMessage('Press Enter To Start The Game');
 
 document.addEventListener('keydown', (e) => {
     // Start the game if enter key is pressed
     if (e.key == 'Enter' && game_state != 'Play') {
-        document.querySelectorAll('.pipe_sprite').forEach((e) => {
-            e.remove();
+        document.querySelectorAll('.pipe_sprite').forEach((element) => {
+            element.remove();
         });
         bird.style.top = '40vh';
         game_state = 'Play';
-        message.innerHTML = '';
+        setMessage('');
         score_title.innerHTML = 'Score : ';
         score_val.innerHTML = '0';
         play();
     }
 });
+
+function setMessage(message){
+    message_tag.innerHTML = message
+    message_tag.style.left = '28vw';
+}
+
 function play() {
     function move() {
 
@@ -55,20 +60,16 @@ function play() {
             } else {
                 // Collision detection with bird and pipes
                 if (
-                    bird_props.left < pipe_sprite_props.left +
-                    pipe_sprite_props.width &&
-                    bird_props.left +
-                    bird_props.width > pipe_sprite_props.left &&
-                    bird_props.top < pipe_sprite_props.top +
-                    pipe_sprite_props.height &&
-                    bird_props.top +
-                    bird_props.height > pipe_sprite_props.top
+                    bird_props.left < pipe_sprite_props.left + pipe_sprite_props.width &&
+                    bird_props.left + bird_props.width > pipe_sprite_props.left &&
+                    bird_props.top < pipe_sprite_props.top + pipe_sprite_props.height &&
+                    bird_props.top + bird_props.height > pipe_sprite_props.top
                 ) {
 
                     // Change game state and end the game
                     // if collision occurs
-                    game_state = 'End';c
-                    message.style.left = '28vw';
+                    game_state = 'End';
+                    setMessage(`You lose... Try to do better than ${score_val.innerHTML}`);
                     return;
                 } else {
                     // Increase the score if player
@@ -107,8 +108,7 @@ function play() {
         if (bird_props.top <= 0 ||
             bird_props.bottom >= background.bottom) {
             game_state = 'End';
-            message.innerHTML = 'Press Enter To Restart';
-            message.style.left = '28vw';
+            setMessage('Press Enter To Restart');
             return;
         }
         bird.style.top = bird_props.top + bird_dy + 'px';
@@ -120,7 +120,7 @@ function play() {
     let pipe_seperation = 0;
 
     // Constant value for the gap between two pipes
-    let pipe_gap = 35;
+    let pipe_gap = 45;
     function create_pipe() {
         if (game_state != 'Play') return;
 
@@ -132,20 +132,28 @@ function play() {
 
             // Calculate random position of pipes on y axis
             let pipe_posi = Math.floor(Math.random() * 43) + 8;
-            let pipe_sprite_inv = document.createElement('div');
-            pipe_sprite_inv.className = 'pipe_sprite';
-            pipe_sprite_inv.style.top = pipe_posi - 70 + 'vh';
-            pipe_sprite_inv.style.left = '100vw';
+            let pipe_top = document.createElement('div');
+            pipe_top.className = 'pipe_sprite';
+            pipe_top.style.top = pipe_posi - 70 + 'vh';
+            pipe_top.style.left = '100vw';
 
-            // Append the created pipe element in DOM
-            document.body.appendChild(pipe_sprite_inv);
-            let pipe_sprite = document.createElement('div');
-            pipe_sprite.className = 'pipe_sprite';
+            let pipe_top_cover = document.createElement('div');
+            pipe_top_cover.className = 'pipe_sprite_top_cover';
+
+
+            let pipe_sprite = pipe_top.cloneNode(true);
             pipe_sprite.style.top = pipe_posi + pipe_gap + 'vh';
-            pipe_sprite.style.left = '100vw';
             pipe_sprite.increase_score = '1';
 
+            let pipe_bottom_cover = document.createElement('div');
+            pipe_bottom_cover.className = 'pipe_sprite_bottom_cover';
+
             // Append the created pipe element in DOM
+            pipe_top.appendChild(pipe_top_cover);
+            document.body.appendChild(pipe_top);
+
+            // Append the created pipe element in DOM
+            pipe_sprite.appendChild(pipe_bottom_cover);
             document.body.appendChild(pipe_sprite);
         }
         pipe_seperation++;
