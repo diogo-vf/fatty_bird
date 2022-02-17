@@ -19,7 +19,7 @@ body {
     position: fixed;
     top: 40vh;
     left: 30vw;
-    z-index: 100;
+    z-index: 2;
 }
   
 .pipe_sprite {
@@ -30,6 +30,7 @@ body {
     width: 6.5vw;
     background-image: url("./sprite_pipe_1px.png");
     background-repeat: repeat-y;
+    z-index: 1;
 }
 
 .pipe_sprite_top_cover {
@@ -42,19 +43,18 @@ body {
 }
 
 .pipe_sprite_bottom_cover {
-    background-image: url("./pipe_top_cover.png");
+    background-image: url("./pipe_cover.png");
     height: 10vh;
     width: 7vw;
     background-repeat: no-repeat;
     position: absolute;
     top: 0px;
     transform: rotate(180deg);
-    right: 0px;
+    right: 0px; 
 }
 
 .message {
     position: fixed;
-    z-index: 10;
     height: 10vh;
     font-size: 10vh;
     font-weight: 100;
@@ -62,19 +62,21 @@ body {
     top: 12vh;
     left: 20vw;
     text-align: center;
+    z-index: 3;
 }
   
 .score {
     position: fixed;
-    z-index: 10;
     height: 10vh;
     font-size: 10vh;
     font-weight: 100;
     color: black;
     top: 0;
     left: 0;
+    z-index: 3;
 }
   
 .score_val {
     color: rgb(90, 55, 55);
+    z-index: 3;
 }

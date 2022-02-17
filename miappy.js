@@ -18,33 +18,61 @@ let score_title = document.querySelector('.score_title');
 
 // Setting initial game state to start
 let game_state = 'End';
-setMessage('Press Enter To Start The Game');
+setMessage('Press Space To Start The Game');
 
-document.addEventListener('keydown', (e) => {
-    // Start the game if enter key is pressed
-    if (e.key == 'Enter' && game_state != 'Play') {
+function startNewGame(){
+    let initial_score = 0
         document.querySelectorAll('.pipe_sprite').forEach((element) => {
             element.remove();
         });
         bird.style.top = '40vh';
         game_state = 'Play';
-        setMessage('');
         score_title.innerHTML = 'Score : ';
-        score_val.innerHTML = '0';
-        play();
-    }
-});
+        setMessage('');
+        setScore(initial_score)
+        play(initial_score);
+}
 
-function setMessage(message){
-    message_tag.innerHTML = message
+function setScore(value) {
+    score_val.innerHTML = value;
+}
+
+function setMessage(value) {
+    message_tag.innerHTML = value
     message_tag.style.left = '28vw';
 }
 
-function play() {
-    function move() {
+function play(initial_score) {
+    total_score = initial_score
+    
+    function checkColition(bird, pipe) {
+        // Bird hits a pipe
+        return bird.left < pipe.left + pipe.width &&
+            bird.left + bird.width > pipe.left &&
+            bird.top < pipe.top + pipe.height &&
+            bird.top + bird.height > pipe.top;
+    }
 
+    function checkOutOfGame(bird, game_area){
+        // bird out of window
+        return bird.top <= 0 || bird.bottom >= game_area.bottom
+    }
+
+    function endOfGame(final_score){        
+        // Change game state and end the game
+        game_state = 'End';
+        setMessage(`You lose... Try to do better than ${final_score}`);
+    }
+
+    function move() {
         // Detect if game has ended
         if (game_state != 'Play') return;
+        
+        bird_props = bird.getBoundingClientRect();
+        if (checkOutOfGame(bird_props, background)){
+            endOfGame(score_val.innerHTML);
+            return;
+        }
 
         // Getting reference to all the pipe elements
         let pipe_sprite = document.querySelectorAll('.pipe_sprite');
@@ -57,37 +85,28 @@ function play() {
             // of the screen hence saving memory
             if (pipe_sprite_props.right <= 0) {
                 element.remove();
-            } else {
-                // Collision detection with bird and pipes
-                if (
-                    bird_props.left < pipe_sprite_props.left + pipe_sprite_props.width &&
-                    bird_props.left + bird_props.width > pipe_sprite_props.left &&
-                    bird_props.top < pipe_sprite_props.top + pipe_sprite_props.height &&
-                    bird_props.top + bird_props.height > pipe_sprite_props.top
-                ) {
-
-                    // Change game state and end the game
-                    // if collision occurs
-                    game_state = 'End';
-                    setMessage(`You lose... Try to do better than ${score_val.innerHTML}`);
-                    return;
-                } else {
-                    // Increase the score if player
-                    // has the successfully dodged the 
-                    if (
-                        pipe_sprite_props.right < bird_props.left &&
-                        pipe_sprite_props.right +
-                        move_speed >= bird_props.left &&
-                        element.increase_score == '1'
-                    ) {
-                        score_val.innerHTML = +score_val.innerHTML + 1;
-                    }
-                    element.style.left =
-                        pipe_sprite_props.left - move_speed + 'px';
-                }
+                return;
             }
+
+            if (checkColition(bird_props, pipe_sprite_props)){
+                // Change game state and end the game
+                // if collision occurs
+                endOfGame(score_val.innerHTML);
+                return;
+            }
+            // Increase the score if player
+            // has the successfully dodged pipes
+            if (
+                pipe_sprite_props.right < bird_props.left &&
+                pipe_sprite_props.right + move_speed >= bird_props.left &&
+                element.increase_score == '1'
+            ) {
+                total_score += 1;
+            }
+            element.style.left = pipe_sprite_props.left - move_speed + 'px';
         });
 
+        setScore(total_score)
         requestAnimationFrame(move);
     }
     requestAnimationFrame(move);
@@ -97,20 +116,10 @@ function play() {
         if (game_state != 'Play') return;
         bird_dy = bird_dy + gravity;
         document.addEventListener('keydown', (e) => {
-            if (e.key == 'ArrowUp' || e.key == ' ') {
+            if (e.key == 'ArrowUp' || e.code == 'Space') {
                 bird_dy = -7.6;
             }
         });
-
-        // Collision detection with bird and
-        // window top and bottom
-
-        if (bird_props.top <= 0 ||
-            bird_props.bottom >= background.bottom) {
-            game_state = 'End';
-            setMessage('Press Enter To Restart');
-            return;
-        }
         bird.style.top = bird_props.top + bird_dy + 'px';
         bird_props = bird.getBoundingClientRect();
         requestAnimationFrame(apply_gravity);
@@ -161,3 +170,11 @@ function play() {
     }
     requestAnimationFrame(create_pipe);
 }
+
+document.addEventListener('keydown', (e) => {
+    console.log({key: e.key, code: e.code})
+    // Start the game if enter key is pressed
+    if (e.code == 'Space' && game_state != 'Play') {
+        startNewGame()
+    }
+});
