@@ -111,15 +111,22 @@ function play(initial_score) {
     }
     requestAnimationFrame(move);
 
+    let ask_to_move = false
     let bird_dy = 0;
     function apply_gravity() {
         if (game_state != 'Play') return;
         bird_dy = bird_dy + gravity;
+        
         document.addEventListener('keydown', (e) => {
             if (e.key == 'ArrowUp' || e.code == 'Space') {
                 bird_dy = -7.6;
+                ask_to_move = true
             }
         });
+        if(!ask_to_move)
+            document.addEventListener('click', (e) => bird_dy = -7.6);
+
+        ask_to_move = false
         bird.style.top = bird_props.top + bird_dy + 'px';
         bird_props = bird.getBoundingClientRect();
         requestAnimationFrame(apply_gravity);
@@ -172,9 +179,15 @@ function play(initial_score) {
 }
 
 document.addEventListener('keydown', (e) => {
-    console.log({key: e.key, code: e.code})
     // Start the game if enter key is pressed
     if (e.code == 'Space' && game_state != 'Play') {
+        startNewGame()
+    }
+});
+
+document.addEventListener('click', (e) => {
+    // Start the game if enter key is pressed
+    if (game_state != 'Play') {
         startNewGame()
     }
 });
